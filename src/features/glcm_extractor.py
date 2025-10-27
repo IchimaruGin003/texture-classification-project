@@ -4,7 +4,6 @@ GLCM特征提取模块
 import os
 import numpy as np
 import pandas as pd
-import cv2
 from PIL import Image
 
 def manual_glcm(image, distance=1, angle=0):
@@ -78,12 +77,11 @@ class GLCMFeatureExtractor:
         self.processed_dir = os.path.join(base_dir, "processed")
     
     def load_image(self, image_path):
-        """加载图像"""
+        """加载图像 - 使用 Pillow 替代 OpenCV"""
         try:
-            image = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
-            if image is None:
-                image = np.array(Image.open(image_path).convert('L'))
-            return image
+            from PIL import Image
+            image = Image.open(image_path).convert('L')  # 直接转换为灰度图
+            return np.array(image)
         except Exception as e:
             print(f"无法读取图像 {image_path}: {e}")
             return None
