@@ -3,10 +3,10 @@ FROM efreidevopschina.azurecr.io/cache/library/python:3.10-slim
 # 设置工作目录
 WORKDIR /app
 
-# 设置环境变量
+# 设置环境变量 - 关键：添加PYTHONPATH
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONDONTWRITEBYTECODE=1
-ENV ENVIRONMENT=production
+ENV PYTHONPATH=/app
 
 # 安装系统依赖
 RUN apt-get update && apt-get install -y \
@@ -26,5 +26,12 @@ COPY . .
 # 创建必要的目录
 RUN mkdir -p data/raw_data data/processed models
 
-# 设置入口点（默认使用production配置）
-CMD ["python", "src/app.py", "--environment", "production"]
+# 复制并设置启动脚本
+COPY docker-entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
+# 设置入口点
+ENTRYPOINT ["docker-entrypoint.sh"]
+
+# 默认命令
+CMD ["python", "src/app.py", "--help"]
