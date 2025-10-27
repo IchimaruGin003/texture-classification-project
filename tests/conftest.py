@@ -1,6 +1,7 @@
 """
 Pytest configuration file - sets up Python path for all tests
 """
+
 import sys
 import os
 
@@ -13,6 +14,7 @@ if project_root not in sys.path:
 # Verify imports work
 try:
     from src.models.knn_trainer import KNNTrainer
+
     print("✓ KNNTrainer import successful in conftest")
 except ImportError as e:
     print(f"✗ KNNTrainer import failed in conftest: {e}")
