@@ -18,44 +18,55 @@ jobs:
       with:
         python-version: '3.10'
     
-    - name: Install DVC and dependencies
+    - name: Debug DVC setup
       run: |
-        python -m pip install --upgrade pip
-        pip install dvc dvc-http
-        pip install -e .
-        pip install black ruff pytest pytest-cov
-    
-    - name: Debug - Check current DVC config
-      run: |
-        echo "=== 当前目录结构 ==="
+        echo "=== 调试信息 ==="
+        echo "当前目录: $(pwd)"
+        echo "目录内容:"
         ls -la
-        echo "=== DVC 配置文件 ==="
-        cat .dvc/config || echo "没有.dvc/config文件"
-        echo "=== 检查DVC状态 ==="
-        dvc status || echo "DVC状态检查失败"
-    
-    - name: Configure DVC for DagsHub
+        echo "DVC 版本:"
+        dvc --version || echo "DVC 未安装"
+        echo "Python 版本:"
+        python --version
+        
+    - name: Install DVC with specific version
       run: |
-        # 移除现有远程（如果有）
+        pip install "dvc[http]"==3.0.0  # 尝试特定版本
+        
+    - name: Configure DVC step by step
+      run: |
+        # 移除可能存在的旧配置
         dvc remote remove origin || true
-        # 添加新的远程配置
+        
+        # 添加远程
         dvc remote add origin https://dagshub.com/IchimaruGin003/texture-classification-project.dvc
+        echo "远程添加完成"
+        
+        # 配置认证
         dvc remote modify origin --local auth basic
         dvc remote modify origin --local user ${{ secrets.DAGSHUB_USERNAME }}
         dvc remote modify origin --local password ${{ secrets.DAGSHUB_TOKEN }}
-        # 验证配置
-        dvc remote list
-        dvc remote get-url origin
-    
-    - name: Pull data with DVC
+        echo "认证配置完成"
+        
+        # 设为默认远程
+        dvc remote default origin
+        echo "设为默认远程完成"
+        
+        # 显示最终配置
+        echo "最终配置:"
+        cat .dvc/config
+        
+    - name: Pull data with detailed logging
       run: |
-        dvc pull -v data/raw_data/
-    
-    - name: Debug - Check downloaded data
+        echo "开始 DVC pull..."
+        dvc pull --verbose
+        echo "DVC pull 完成状态: $?"
+
+    - name: Install project and dependencies
       run: |
-        echo "数据目录内容:"
-        ls -la data/raw_data/ || echo "raw_data目录不存在"
-        find data/raw_data/ -name "*.png" -o -name "*.jpg" | head -10
+        python -m pip install --upgrade pip
+        pip install -e .  # 关键：以可编辑模式安装项目
+        pip install black ruff pytest pytest-cov
     
     - name: Run tests
       run: |
