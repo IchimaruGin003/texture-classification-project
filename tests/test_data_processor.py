@@ -1,8 +1,5 @@
-import pytest
 import os
-import tempfile
 import numpy as np
-from PIL import Image
 from src.processing.data_processor import TextureDataProcessor, add_salt_pepper_noise
 
 

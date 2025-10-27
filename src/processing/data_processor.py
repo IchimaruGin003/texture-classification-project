@@ -2,7 +2,6 @@ import os
 import numpy as np
 from PIL import Image
 import random
-import shutil
 
 
 def add_salt_pepper_noise(image, salt_prob=0.01, pepper_prob=0.01):

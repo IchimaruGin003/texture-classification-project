@@ -5,7 +5,6 @@ GLCM特征提取模块
 import os
 import numpy as np
 import pandas as pd
-from PIL import Image
 
 
 def manual_glcm(image, distance=1, angle=0):

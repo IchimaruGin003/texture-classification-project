@@ -1,6 +1,7 @@
 """
 Pytest configuration file - sets up Python path for all tests
 """
+
 import sys
 import os
 

@@ -1,4 +1,3 @@
-import pytest
 import numpy as np
 from src.features.glcm_extractor import (
     manual_glcm,
