@@ -4,6 +4,10 @@ from setuptools import setup, find_packages
 with open('requirements.txt', 'r', encoding='utf-8') as f:
     requirements = [line.strip() for line in f if line.strip() and not line.startswith('#')]
 
+print("=== Setup.py Debug Info ===")
+print("Requirements:", requirements)
+print("Packages found:", find_packages())
+
 setup(
     name="texture-classification",
     version="1.0.0",
