@@ -1,0 +1,17 @@
+.git
+.github
+.cache
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+env
+venv
+.venv
+.idea
+.vscode
+README.md
+.pre-commit-config.yaml
+.dockerignore
+.gitignore
