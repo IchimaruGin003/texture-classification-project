@@ -12,53 +12,17 @@ jobs:
     
     steps:
     - uses: actions/checkout@v4
-      with:
-        lfs: true
     
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
         python-version: '3.10'
     
-    - name: Install DVC and dependencies
+    - name: Install project and dependencies
       run: |
-        pip install "dvc[http]"
-        pip install -e .
-        pip install black ruff pytest pytest-cov pillow
-    
-    - name: Configure DVC with correct URL
-      run: |
-        # 移除现有配置
-        dvc remote remove origin || true
-        
-        # 添加正确的远程 URL
-        dvc remote add origin https://dagshub.com/IchimaruGin003/texture-classification-project.dvc
-        dvc remote default origin
-        
-        # 使用包含认证信息的 URL
-        AUTH_URL="https://${{ secrets.DAGSHUB_USERNAME }}:${{ secrets.DAGSHUB_TOKEN }}@dagshub.com/IchimaruGin003/texture-classification-project.dvc"
-        dvc remote modify origin url "$AUTH_URL"
-        
-        echo "=== DVC 配置 ==="
-        dvc remote list
-        cat .dvc/config
-    
-    - name: Pull data with DVC
-      run: |
-        echo "开始拉取数据..."
-        dvc pull --verbose
-    
-    - name: Verify data structure
-      run: |
-        echo "=== 验证数据 ==="
-        echo "数据目录:"
-        ls -la data/ || echo "data 目录不存在"
-        echo "raw_data 目录:"
-        ls -la data/raw_data/ || echo "raw_data 目录不存在"
-        echo "文件数量:"
-        find data/raw_data/ -type f 2>/dev/null | wc -l || echo "0"
-        echo "样本文件:"
-        find data/raw_data/ -type f 2>/dev/null | head -5 || echo "无文件"
+        python -m pip install --upgrade pip
+        pip install -e .  # 关键：以可编辑模式安装项目
+        pip install black ruff pytest pytest-cov
     
     - name: Run tests
       run: |
@@ -79,21 +43,6 @@ jobs:
     
     steps:
     - uses: actions/checkout@v4
-      with:
-        lfs: true
-    
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.10'
-    
-    - name: Install DVC and pull data
-      run: |
-        pip install "dvc[http]"
-        dvc remote remove origin || true
-        dvc remote add origin "https://${{ secrets.DAGSHUB_USERNAME }}:${{ secrets.DAGSHUB_TOKEN }}@dagshub.com/IchimaruGin003/texture-classification-project.dvc"
-        dvc remote default origin
-        dvc pull --verbose
     
     - name: Build Staging Docker image
       run: |
@@ -110,21 +59,6 @@ jobs:
     
     steps:
     - uses: actions/checkout@v4
-      with:
-        lfs: true
-    
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.10'
-    
-    - name: Install DVC and pull data
-      run: |
-        pip install "dvc[http]"
-        dvc remote remove origin || true
-        dvc remote add origin "https://${{ secrets.DAGSHUB_USERNAME }}:${{ secrets.DAGSHUB_TOKEN }}@dagshub.com/IchimaruGin003/texture-classification-project.dvc"
-        dvc remote default origin
-        dvc pull --verbose
     
     - name: Build Production Docker image
       run: |
