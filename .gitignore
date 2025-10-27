@@ -39,3 +39,7 @@ env/
 data/processed/
 models/
 mlruns/
+
+# 确保不忽略src目录及其内容
+!src/
+!src/**/*
