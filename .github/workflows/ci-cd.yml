@@ -25,17 +25,31 @@ jobs:
         pip install -e .
         pip install black ruff pytest pytest-cov
     
+    - name: Debug - Check current DVC config
+      run: |
+        echo "=== 当前目录结构 ==="
+        ls -la
+        echo "=== DVC 配置文件 ==="
+        cat .dvc/config || echo "没有.dvc/config文件"
+        echo "=== 检查DVC状态 ==="
+        dvc status || echo "DVC状态检查失败"
+    
     - name: Configure DVC for DagsHub
       run: |
-        # 设置 DVC 远程存储（使用你的 DagsHub 仓库）
+        # 移除现有远程（如果有）
+        dvc remote remove origin || true
+        # 添加新的远程配置
         dvc remote add origin https://dagshub.com/IchimaruGin003/texture-classification-project.dvc
         dvc remote modify origin --local auth basic
         dvc remote modify origin --local user ${{ secrets.DAGSHUB_USERNAME }}
         dvc remote modify origin --local password ${{ secrets.DAGSHUB_TOKEN }}
+        # 验证配置
+        dvc remote list
+        dvc remote get-url origin
     
     - name: Pull data with DVC
       run: |
-        dvc pull data/raw_data/
+        dvc pull -v data/raw_data/
     
     - name: Debug - Check downloaded data
       run: |
