@@ -1,5 +1,4 @@
 import os
-import cv2
 import numpy as np
 from PIL import Image
 import random
@@ -32,8 +31,6 @@ class TextureDataProcessor:
         if not os.path.exists(self.processed_dir):
             os.makedirs(self.processed_dir)
             print(f"创建主目录: {self.processed_dir}")
-        
-        features_list = []
         
         for class_name in texture_classes:
             print(f"处理类别: {class_name}")
@@ -68,8 +65,9 @@ class TextureDataProcessor:
                                 image = image.convert('L')
                             image = np.array(image)
                             
+                            # 使用Pillow保存图像，而不是cv2
                             output_path = os.path.join(train_dir, f"{class_name}_{i+1}.png")
-                            cv2.imwrite(output_path, image)
+                            Image.fromarray(image).save(output_path)
                             train_count += 1
                             
                         except Exception as e:
@@ -89,8 +87,9 @@ class TextureDataProcessor:
                                                               salt_prob=0.002,
                                                               pepper_prob=0.002)
                             
+                            # 使用Pillow保存图像，而不是cv2
                             output_path = os.path.join(test_dir, f"{class_name}_{i+1}.png")
-                            cv2.imwrite(output_path, noisy_image)
+                            Image.fromarray(noisy_image).save(output_path)
                             test_count += 1
                             
                             print(f"  添加噪声: {class_name}_{i+1}.png")
